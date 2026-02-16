@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-    <div class="flex items-center justify-between p-6 border-b border-slate-100">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-6 border-b border-slate-100">
       <h2 class="m-0 text-xl font-semibold text-slate-800">Transações</h2>
-      <div class="transaction-list-count">
+      <div class="transaction-list-count self-start sm:self-auto">
         <ds-badge variant="primary" size="lg">
           {{ filteredCount }} de {{ totalCount }} transações
         </ds-badge>

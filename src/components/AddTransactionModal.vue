@@ -15,10 +15,10 @@
       />
 
       <ds-input
-        v-model="formData.value"
-        type="number"
+        :model-value="displayValue"
+        @update:model-value="handleValueChange"
         label="Valor"
-        placeholder="0.00"
+        placeholder="R$ 0,00"
         required
         :error="errors.value"
       />
@@ -129,11 +129,31 @@ const isOpen = computed({
 
 const formData = ref({
   description: '',
-  value: '' as string | number,
+  value: 0 as number,
   type: 'expense' as TransactionType,
   category: '' as TransactionCategory | '',
   date: new Date().toISOString().split('T')[0],
 })
+
+const displayValue = ref('')
+
+const handleValueChange = (newValue: string | number) => {
+  let value = newValue.toString().replace(/\D/g, '')
+  
+  if (!value) {
+    displayValue.value = ''
+    formData.value.value = 0
+    return
+  }
+
+  const numericValue = Number(value) / 100
+  formData.value.value = numericValue
+  
+  displayValue.value = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(numericValue)
+}
 
 const errors = ref({
   description: '',
@@ -151,11 +171,12 @@ watch(() => props.modelValue, (newValue) => {
   if (newValue) {
     formData.value = {
       description: '',
-      value: '',
+      value: 0,
       type: 'expense',
       category: '',
       date: new Date().toISOString().split('T')[0],
     }
+    displayValue.value = ''
     errors.value = {
       description: '',
       value: '',
@@ -195,8 +216,7 @@ const validateForm = (): boolean => {
     isValid = false
   }
 
-  const valueNum = Number(formData.value.value)
-  if (!formData.value.value || valueNum <= 0) {
+  if (formData.value.value <= 0) {
     errors.value.value = 'Valor deve ser maior que zero'
     isValid = false
   }
@@ -243,11 +263,12 @@ const handleClose = () => {
 const resetForm = () => {
   formData.value = {
     description: '',
-    value: '',
+    value: 0,
     type: 'expense',
     category: '',
     date: new Date().toISOString().split('T')[0],
   }
+  displayValue.value = ''
   errors.value = {
     description: '',
     value: '',
