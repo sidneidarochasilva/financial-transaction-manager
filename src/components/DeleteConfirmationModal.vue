@@ -1,14 +1,10 @@
 <template>
-  <ds-modal
-    v-model="isOpen"
-    title="Confirmar Exclusão"
-    size="sm"
-    @close="handleClose"
-  >
+  <ds-modal v-model="isOpen" title="Confirmar Exclusão" size="sm" @close="handleClose">
     <div class="flex flex-col gap-6">
       <div class="flex justify-center text-amber-500">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-12 h-12">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       </div>
 
@@ -29,10 +25,7 @@
         </div>
         <div class="flex justify-between items-center">
           <span class="text-sm font-medium text-slate-500">Tipo:</span>
-          <ds-badge
-            :variant="transaction.type === 'income' ? 'success' : 'danger'"
-            size="sm"
-          >
+          <ds-badge :variant="transaction.type === 'income' ? 'success' : 'danger'" size="sm">
             {{ transaction.type === 'income' ? 'Entrada' : 'Saída' }}
           </ds-badge>
         </div>
@@ -42,11 +35,7 @@
         </div>
       </div>
 
-      <ds-alert
-        v-model="showAlert"
-        variant="warning"
-        message="Esta ação não pode ser desfeita."
-      />
+      <ds-alert v-model="showAlert" variant="warning" message="Esta ação não pode ser desfeita." />
     </div>
 
     <template #footer>
@@ -54,7 +43,7 @@
         Cancelar
       </ds-button>
       <ds-button variant="danger" :loading="loading" @click="handleConfirm">
-        Excluir Transação
+        Excluir
       </ds-button>
     </template>
   </ds-modal>

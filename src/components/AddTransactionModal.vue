@@ -1,27 +1,11 @@
 <template>
-  <ds-modal
-    v-model="isOpen"
-    title="Nova Transação"
-    size="md"
-    @close="handleClose"
-  >
+  <ds-modal v-model="isOpen" title="Nova Transação" size="md" @close="handleClose">
     <form @submit.prevent="onSubmit" class="flex flex-col gap-5">
-      <ds-input
-        v-model="description"
-        label="Descrição"
-        placeholder="Ex: Salário, Compras, etc."
-        required
-        :error="errors.description"
-      />
+      <ds-input v-model="description" label="Descrição" placeholder="Ex: Salário, Compras, etc." required
+        :error="errors.description" />
 
-      <ds-input
-        :model-value="displayValue"
-        @update:model-value="handleValueChange"
-        label="Valor"
-        placeholder="R$ 0,00"
-        required
-        :error="errors.value"
-      />
+      <ds-input :model-value="displayValue" @update:model-value="handleValueChange" label="Valor" placeholder="R$ 0,00"
+        required :error="errors.value" />
 
       <div class="flex flex-col gap-2">
         <label class="text-sm font-medium text-slate-700">
@@ -30,13 +14,9 @@
         </label>
         <div class="grid grid-cols-2 gap-3">
           <label class="relative flex items-center cursor-pointer">
-            <input
-              type="radio"
-              v-model="type"
-              value="income"
-              class="peer sr-only"
-            />
-            <span class="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-slate-500 bg-white border-2 border-slate-200 rounded-lg transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700">
+            <input type="radio" v-model="type" value="income" class="peer sr-only" />
+            <span
+              class="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-slate-500 bg-white border-2 border-slate-200 rounded-lg transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12" />
               </svg>
@@ -44,13 +24,9 @@
             </span>
           </label>
           <label class="relative flex items-center cursor-pointer">
-            <input
-              type="radio"
-              v-model="type"
-              value="expense"
-              class="peer sr-only"
-            />
-            <span class="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-slate-500 bg-white border-2 border-slate-200 rounded-lg transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700">
+            <input type="radio" v-model="type" value="expense" class="peer sr-only" />
+            <span
+              class="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-slate-500 bg-white border-2 border-slate-200 rounded-lg transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6" />
               </svg>
@@ -61,30 +37,12 @@
         <p v-if="errors.type" class="text-sm text-red-500 m-0">{{ errors.type }}</p>
       </div>
 
-      <ds-select
-        v-model="category"
-        label="Categoria"
-        :options="categoryOptions"
-        placeholder="Selecione uma categoria"
-        required
-        :error="errors.category"
-      />
+      <ds-select v-model="category" label="Categoria" :options="categoryOptions" placeholder="Selecione uma categoria"
+        required :error="errors.category" />
 
-      <ds-input
-        v-model="date"
-        type="date"
-        label="Data"
-        required
-        :error="errors.date"
-      />
+      <ds-input v-model="date" type="date" label="Data" required :error="errors.date" />
 
-      <ds-alert
-        v-if="formError"
-        v-model="showError"
-        variant="error"
-        :message="formError"
-        dismissible
-      />
+      <ds-alert v-if="formError" v-model="showError" variant="error" :message="formError" dismissible />
     </form>
 
     <template #footer>
@@ -92,7 +50,7 @@
         Cancelar
       </ds-button>
       <ds-button variant="success" :loading="loading" @click="onSubmit">
-        Adicionar Transação
+        Adicionar
       </ds-button>
     </template>
   </ds-modal>
@@ -149,7 +107,7 @@ const displayValue = ref('')
 
 const handleValueChange = (newValue: string | number) => {
   let value = newValue.toString().replace(/\D/g, '')
-  
+
   if (!value) {
     displayValue.value = ''
     setFieldValue('value', 0)
@@ -158,7 +116,7 @@ const handleValueChange = (newValue: string | number) => {
 
   const numericValue = Number(value) / 100
   setFieldValue('value', numericValue)
-  
+
   displayValue.value = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',

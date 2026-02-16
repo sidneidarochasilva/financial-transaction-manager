@@ -1,4 +1,25 @@
 /** @type {import('tailwindcss').Config} */
+import tokens from './src/design-system/tokens/tokens.json'
+
+// Helper to flatten colors for CSS variables and Tailwind theme
+const flattenColors = (colors, prefix = 'color') => {
+  const cssVars = {}
+  const themeColors = {}
+
+  Object.entries(colors).forEach(([colorName, shades]) => {
+    themeColors[colorName] = {}
+    Object.entries(shades).forEach(([shade, value]) => {
+      const varName = `--${prefix}-${colorName}-${shade}`
+      cssVars[varName] = value
+      themeColors[colorName][shade] = `var(${varName})`
+    })
+  })
+
+  return { cssVars, themeColors }
+}
+
+const { cssVars, themeColors } = flattenColors(tokens.colors)
+
 export default {
   content: [
     "./index.html",
@@ -6,75 +27,17 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: {
-          50: 'var(--color-primary-50)',
-          100: 'var(--color-primary-100)',
-          200: 'var(--color-primary-200)',
-          300: 'var(--color-primary-300)',
-          400: 'var(--color-primary-400)',
-          500: 'var(--color-primary-500)',
-          600: 'var(--color-primary-600)',
-          700: 'var(--color-primary-700)',
-          800: 'var(--color-primary-800)',
-          900: 'var(--color-primary-900)',
-        },
-        success: {
-          50: 'var(--color-success-50)',
-          100: 'var(--color-success-100)',
-          200: 'var(--color-success-200)',
-          300: 'var(--color-success-300)',
-          400: 'var(--color-success-400)',
-          500: 'var(--color-success-500)',
-          600: 'var(--color-success-600)',
-          700: 'var(--color-success-700)',
-          800: 'var(--color-success-800)',
-          900: 'var(--color-success-900)',
-        },
-        warning: {
-          50: 'var(--color-warning-50)',
-          100: 'var(--color-warning-100)',
-          200: 'var(--color-warning-200)',
-          300: 'var(--color-warning-300)',
-          400: 'var(--color-warning-400)',
-          500: 'var(--color-warning-500)',
-          600: 'var(--color-warning-600)',
-          700: 'var(--color-warning-700)',
-          800: 'var(--color-warning-800)',
-          900: 'var(--color-warning-900)',
-        },
-        danger: {
-          50: 'var(--color-danger-50)',
-          100: 'var(--color-danger-100)',
-          200: 'var(--color-danger-200)',
-          300: 'var(--color-danger-300)',
-          400: 'var(--color-danger-400)',
-          500: 'var(--color-danger-500)',
-          600: 'var(--color-danger-600)',
-          700: 'var(--color-danger-700)',
-          800: 'var(--color-danger-800)',
-          900: 'var(--color-danger-900)',
-        },
-        neutral: {
-          50: 'var(--color-neutral-50)',
-          100: 'var(--color-neutral-100)',
-          200: 'var(--color-neutral-200)',
-          300: 'var(--color-neutral-300)',
-          400: 'var(--color-neutral-400)',
-          500: 'var(--color-neutral-500)',
-          600: 'var(--color-neutral-600)',
-          700: 'var(--color-neutral-700)',
-          800: 'var(--color-neutral-800)',
-          900: 'var(--color-neutral-900)',
-        },
-      },
+      colors: themeColors,
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
-      boxShadow: {
-        'soft': '0 2px 8px rgba(0, 0, 0, 0.08)',
-        'medium': '0 4px 16px rgba(0, 0, 0, 0.12)',
-        'large': '0 8px 32px rgba(0, 0, 0, 0.16)',
+      // Extend other theme properties from tokens if needed
+      borderRadius: tokens.borderRadius,
+      boxShadow: tokens.shadows,
+      fontSize: tokens.fontSize,
+      fontWeight: tokens.fontWeight,
+      spacing: {
+        ...tokens.spacing,
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
@@ -97,5 +60,11 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addBase }) {
+      addBase({
+        ':root': cssVars,
+      })
+    },
+  ],
 }
