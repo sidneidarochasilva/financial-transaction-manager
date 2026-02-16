@@ -30,7 +30,7 @@ import { computed, ref } from 'vue'
 
 export interface DsInputProps {
   modelValue?: string | number
-  type?: 'text' | 'number' | 'email' | 'password' | 'tel' | 'url'
+  type?: 'text' | 'number' | 'email' | 'password' | 'tel' | 'url' | 'date'
   label?: string
   placeholder?: string
   error?: string
