@@ -73,6 +73,17 @@ Para garantir uma experiência fluida mesmo com grandes volumes de dados (requis
 - Os itens são posicionados via `transform: translateY` conforme o usuário rola a página.
 - **Resultado:** O DOM mantém uma contagem constante e baixa de elementos (ex: ~20 itens), garantindo scroll a **60fps** e baixo consumo de memória, independentemente do tamanho da lista.
 
+### 🛡️ Validação de Formulários
+
+Utilizamos **VeeValidate** em conjunto com **Yup** para garantir a integridade dos dados e uma experiência de usuário robusta.
+
+**Decisões Técnicas:**
+- **Centralização de Schemas (`src/schemas/`):** As regras de validação (ex: campos obrigatórios, tipos de dados, limites de valores) são definidas em arquivos de schema separados e reutilizáveis, em vez de ficarem acopladas dentro dos componentes Vue. Isso permite:
+  - **Reutilização:** O mesmo schema pode ser usado em diferentes formulários ou contextos (ex: criação vs edição).
+  - **Testabilidade:** Os schemas podem ser testados unitariamente de forma isolada.
+  - **Manutenibilidade:** Alterações nas regras de negócio são feitas em um único lugar.
+- **Integração com Componentes:** Os componentes de formulário (como `AddTransactionModal`) consomem esses schemas através do hook `useForm` do VeeValidate, garantindo validação reativa e mensagens de erro consistentes.
+
 ### ✨ Funcionalidades e UX
 
 - **Dashboard:** Visão geral com Cards de resumo e Gráfico visual.

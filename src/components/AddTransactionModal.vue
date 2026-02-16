@@ -5,9 +5,9 @@
     size="md"
     @close="handleClose"
   >
-    <form @submit.prevent="handleSubmit" class="flex flex-col gap-5">
+    <form @submit.prevent="onSubmit" class="flex flex-col gap-5">
       <ds-input
-        v-model="formData.description"
+        v-model="description"
         label="Descrição"
         placeholder="Ex: Salário, Compras, etc."
         required
@@ -32,7 +32,7 @@
           <label class="relative flex items-center cursor-pointer">
             <input
               type="radio"
-              v-model="formData.type"
+              v-model="type"
               value="income"
               class="peer sr-only"
             />
@@ -46,7 +46,7 @@
           <label class="relative flex items-center cursor-pointer">
             <input
               type="radio"
-              v-model="formData.type"
+              v-model="type"
               value="expense"
               class="peer sr-only"
             />
@@ -62,7 +62,7 @@
       </div>
 
       <ds-select
-        v-model="formData.category"
+        v-model="category"
         label="Categoria"
         :options="categoryOptions"
         placeholder="Selecione uma categoria"
@@ -71,7 +71,7 @@
       />
 
       <ds-input
-        v-model="formData.date"
+        v-model="date"
         type="date"
         label="Data"
         required
@@ -79,10 +79,10 @@
       />
 
       <ds-alert
-        v-if="error"
+        v-if="formError"
         v-model="showError"
         variant="error"
-        :message="error"
+        :message="formError"
         dismissible
       />
     </form>
@@ -91,7 +91,7 @@
       <ds-button variant="ghost" @click="handleClose">
         Cancelar
       </ds-button>
-      <ds-button variant="success" :loading="loading" @click="handleSubmit">
+      <ds-button variant="success" :loading="loading" @click="onSubmit">
         Adicionar Transação
       </ds-button>
     </template>
@@ -100,9 +100,11 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useForm } from 'vee-validate'
 import type { TransactionType, TransactionCategory } from '@/types/transaction'
 import { categoryLabels } from '@/types/transaction'
 import { DsModal, DsInput, DsSelect, DsButton, DsAlert } from '@design-system'
+import { transactionSchema } from '@/schemas/transaction'
 
 export interface AddTransactionModalProps {
   modelValue: boolean
@@ -127,13 +129,21 @@ const isOpen = computed({
   set: (value) => emit('update:modelValue', value),
 })
 
-const formData = ref({
-  description: '',
-  value: 0 as number,
-  type: 'expense' as TransactionType,
-  category: '' as TransactionCategory | '',
-  date: new Date().toISOString().split('T')[0],
+const { errors, defineField, handleSubmit, resetForm, setFieldValue, values } = useForm({
+  validationSchema: transactionSchema,
+  initialValues: {
+    description: '',
+    value: 0,
+    type: 'expense' as TransactionType,
+    category: '' as TransactionCategory | '',
+    date: new Date().toISOString().split('T')[0],
+  },
 })
+
+const [description] = defineField('description')
+const [type] = defineField('type')
+const [category] = defineField('category')
+const [date] = defineField('date')
 
 const displayValue = ref('')
 
@@ -142,12 +152,12 @@ const handleValueChange = (newValue: string | number) => {
   
   if (!value) {
     displayValue.value = ''
-    formData.value.value = 0
+    setFieldValue('value', 0)
     return
   }
 
   const numericValue = Number(value) / 100
-  formData.value.value = numericValue
+  setFieldValue('value', numericValue)
   
   displayValue.value = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -155,42 +165,29 @@ const handleValueChange = (newValue: string | number) => {
   }).format(numericValue)
 }
 
-const errors = ref({
-  description: '',
-  value: '',
-  type: '',
-  category: '',
-  date: '',
-})
-
-const error = ref('')
+const formError = ref('')
 const showError = ref(false)
 
 // Reset form when modal opens
 watch(() => props.modelValue, (newValue) => {
   if (newValue) {
-    formData.value = {
-      description: '',
-      value: 0,
-      type: 'expense',
-      category: '',
-      date: new Date().toISOString().split('T')[0],
-    }
+    resetForm({
+      values: {
+        description: '',
+        value: 0,
+        type: 'expense',
+        category: '',
+        date: new Date().toISOString().split('T')[0],
+      }
+    })
     displayValue.value = ''
-    errors.value = {
-      description: '',
-      value: '',
-      type: '',
-      category: '',
-      date: '',
-    }
-    error.value = ''
+    formError.value = ''
     showError.value = false
   }
 })
 
 const categoryOptions = computed(() => {
-  const categories: TransactionCategory[] = formData.value.type === 'income'
+  const categories: TransactionCategory[] = values.type === 'income'
     ? ['salary', 'freelance', 'investment', 'other']
     : ['food', 'transport', 'entertainment', 'bills', 'shopping', 'health', 'education', 'other']
 
@@ -200,88 +197,23 @@ const categoryOptions = computed(() => {
   }))
 })
 
-const validateForm = (): boolean => {
-  errors.value = {
-    description: '',
-    value: '',
-    type: '',
-    category: '',
-    date: '',
-  }
-
-  let isValid = true
-
-  if (!formData.value.description.trim()) {
-    errors.value.description = 'Descrição é obrigatória'
-    isValid = false
-  }
-
-  if (formData.value.value <= 0) {
-    errors.value.value = 'Valor deve ser maior que zero'
-    isValid = false
-  }
-
-  if (!formData.value.type) {
-    errors.value.type = 'Tipo é obrigatório'
-    isValid = false
-  }
-
-  if (!formData.value.category) {
-    errors.value.category = 'Categoria é obrigatória'
-    isValid = false
-  }
-
-  if (!formData.value.date) {
-    errors.value.date = 'Data é obrigatória'
-    isValid = false
-  }
-
-  return isValid
-}
-
-const handleSubmit = () => {
-  if (!validateForm()) {
-    error.value = 'Por favor, preencha todos os campos corretamente'
-    showError.value = true
-    return
-  }
-
+const onSubmit = handleSubmit((formValues) => {
   emit('submit', {
-    description: formData.value.description,
-    value: Number(formData.value.value),
-    type: formData.value.type,
-    category: formData.value.category as TransactionCategory,
-    date: new Date(formData.value.date),
+    description: formValues.description,
+    value: formValues.value,
+    type: formValues.type as TransactionType,
+    category: formValues.category as TransactionCategory,
+    date: new Date(formValues.date),
   })
-}
+})
 
 const handleClose = () => {
   resetForm()
   emit('update:modelValue', false)
 }
 
-const resetForm = () => {
-  formData.value = {
-    description: '',
-    value: 0,
-    type: 'expense',
-    category: '',
-    date: new Date().toISOString().split('T')[0],
-  }
-  displayValue.value = ''
-  errors.value = {
-    description: '',
-    value: '',
-    type: '',
-    category: '',
-    date: '',
-  }
-  error.value = ''
-  showError.value = false
-}
-
 // Reset category when type changes
-watch(() => formData.value.type, () => {
-  formData.value.category = ''
+watch(() => values.type, () => {
+  setFieldValue('category', '')
 })
 </script>
