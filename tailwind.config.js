@@ -1,0 +1,101 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: 'var(--color-primary-50)',
+          100: 'var(--color-primary-100)',
+          200: 'var(--color-primary-200)',
+          300: 'var(--color-primary-300)',
+          400: 'var(--color-primary-400)',
+          500: 'var(--color-primary-500)',
+          600: 'var(--color-primary-600)',
+          700: 'var(--color-primary-700)',
+          800: 'var(--color-primary-800)',
+          900: 'var(--color-primary-900)',
+        },
+        success: {
+          50: 'var(--color-success-50)',
+          100: 'var(--color-success-100)',
+          200: 'var(--color-success-200)',
+          300: 'var(--color-success-300)',
+          400: 'var(--color-success-400)',
+          500: 'var(--color-success-500)',
+          600: 'var(--color-success-600)',
+          700: 'var(--color-success-700)',
+          800: 'var(--color-success-800)',
+          900: 'var(--color-success-900)',
+        },
+        warning: {
+          50: 'var(--color-warning-50)',
+          100: 'var(--color-warning-100)',
+          200: 'var(--color-warning-200)',
+          300: 'var(--color-warning-300)',
+          400: 'var(--color-warning-400)',
+          500: 'var(--color-warning-500)',
+          600: 'var(--color-warning-600)',
+          700: 'var(--color-warning-700)',
+          800: 'var(--color-warning-800)',
+          900: 'var(--color-warning-900)',
+        },
+        danger: {
+          50: 'var(--color-danger-50)',
+          100: 'var(--color-danger-100)',
+          200: 'var(--color-danger-200)',
+          300: 'var(--color-danger-300)',
+          400: 'var(--color-danger-400)',
+          500: 'var(--color-danger-500)',
+          600: 'var(--color-danger-600)',
+          700: 'var(--color-danger-700)',
+          800: 'var(--color-danger-800)',
+          900: 'var(--color-danger-900)',
+        },
+        neutral: {
+          50: 'var(--color-neutral-50)',
+          100: 'var(--color-neutral-100)',
+          200: 'var(--color-neutral-200)',
+          300: 'var(--color-neutral-300)',
+          400: 'var(--color-neutral-400)',
+          500: 'var(--color-neutral-500)',
+          600: 'var(--color-neutral-600)',
+          700: 'var(--color-neutral-700)',
+          800: 'var(--color-neutral-800)',
+          900: 'var(--color-neutral-900)',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        'soft': '0 2px 8px rgba(0, 0, 0, 0.08)',
+        'medium': '0 4px 16px rgba(0, 0, 0, 0.12)',
+        'large': '0 8px 32px rgba(0, 0, 0, 0.16)',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'slide-down': 'slideDown 0.3s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}
